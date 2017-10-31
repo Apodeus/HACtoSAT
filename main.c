@@ -11,7 +11,9 @@ void showVars(int** vars, int w, int h){
   }
 }
 
-Clause number2(SAT_Formula f, int** vars, int k){
+
+
+void number2(SAT_Formula f, int** vars, int k){
   int nbSommet = orderG();
   Clause c1 = create_clause(nbSommet, DISJONCTIVE);
   for(int i = 0; i < nbSommet; i++){
