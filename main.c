@@ -11,6 +11,28 @@ void showVars(int** vars, int w, int h){
   }
 }
 
+void number1(SAT_Formula f, int** vars, int k){
+  int nbSommet = orderG();
+  for(int sommet = 0; sommet < nbSommet; sommet++){//begin orange Part
+    Clause c = create_clause(k, DISJONCTIVE);//begin Yellow Part
+    int h = 0;
+    for(int i = 0; i < c->length; i++){
+        c->vars[i] = vars[sommet][h];
+        h++;
+    }
+    add(f, c);
+    //end yellow part
+    //begin green Part
+    for(int i = 0; i < k - 1; i++){
+      for(int j = i + 1; j < k; j++){
+        Clause c2 = create_clause(2, DISJONCTIVE);
+        c2->vars[0] = -vars[sommet][i];
+        c2->vars[1] = -vars[sommet][j];
+        add(f, c2);
+      }
+    }//end green Part
+  }//end Orange Part
+}
 
 
 void number2(SAT_Formula f, int** vars, int k){
@@ -65,6 +87,7 @@ int main(int argc, char* argv[]){
   showVars(vars, nbSommet, k);
   printf("\n\n");
 
+  number1(formula, vars, k);
   number2(formula, vars, k);
   number3(formula, vars, k);
   /*

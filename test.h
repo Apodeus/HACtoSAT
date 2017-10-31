@@ -1,7 +1,5 @@
 
 
-
-
 int orderG();
 int sizeG();
 

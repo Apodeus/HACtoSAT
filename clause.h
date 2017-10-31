@@ -7,7 +7,6 @@ enum t_condition{
 
 typedef enum t_Condition Condition;
 
-
 typedef struct t_clause *Clause;
 
 struct t_clause {
