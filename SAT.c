@@ -16,6 +16,7 @@ void destroyFormula(SAT_Formula f){
   for(int i = 0; i < f->nb_clause; i++){
     destroyClause(f->clauses[i]);
   }
+  free(f->clauses);
   free(f);
 }
 
