@@ -11,6 +11,13 @@ void showVars(int** vars, int w, int h){
   }
 }
 
+void destroyVars(int** vars){
+  for(int i = 0; i < orderG(); i++){
+    free(vars[i]);
+  }
+  free(vars);
+}
+
 void number1(SAT_Formula f, int** vars, int k){
   int nbSommet = orderG();
   for(int sommet = 0; sommet < nbSommet; sommet++){//begin orange Part
@@ -45,7 +52,7 @@ void number2(SAT_Formula f, int** vars, int k){
   //
   //n² +n / 2
   int nb = ((nbSommet * nbSommet) + nbSommet) / 2;
-  printf("\n NB CLAUSES NUMBER 2 : %d\n\n", nb);
+  //printf("\n NB CLAUSES NUMBER 2 : %d\n\n", nb);
   for(int i = 0; i < nbSommet - 1; i++){
     for(int j = i + 1; j < nbSommet; j++){
       Clause c = create_clause(2, DISJONCTIVE);
@@ -65,6 +72,34 @@ void number3(SAT_Formula f, int** vars, int k){
   //return c;
 }
 
+int nbVoisin(int u){
+  int n = 0;
+  for(int i = 0; i < orderG(); i++){
+    if(are_adjacent(u, i))
+      n++;
+  }
+  return n;
+}
+
+void number4(SAT_Formula f, int** vars, int k){
+  int nbSommet = orderG();
+  for(int sommet = 0; sommet < nbSommet; sommet++){
+    for(int i = 1; i < k; i++){
+      Clause c = create_clause(nbVoisin(sommet) + 1, DISJONCTIVE);
+      c->vars[0] = -vars[sommet][i];
+      int cursor = 1;
+      for(int voisin = 0; voisin < nbSommet; voisin++){
+        if(are_adjacent(sommet, voisin)){
+          c->vars[cursor] = vars[voisin][i - 1];
+          cursor++;
+        }
+      }
+      add(f, c);
+
+    }
+  }
+}
+
 int main(int argc, char* argv[]){
   //Init vars
 
@@ -72,6 +107,7 @@ int main(int argc, char* argv[]){
   int k = 1;
   if(argc > 1)
     k = atoi(argv[1]);
+  k++;
 
   int** vars = (int**) malloc(sizeof(int*) * nbSommet);// All vars we need Xu,i, with u€V and i€[0;k]
   SAT_Formula formula = create_formula();
@@ -84,16 +120,20 @@ int main(int argc, char* argv[]){
       n++;
     }
   }
-  showVars(vars, nbSommet, k);
-  printf("\n\n");
+
+
+  //showVars(vars, nbSommet, k);
+  //printf("\n\n");
 
   number1(formula, vars, k);
   number2(formula, vars, k);
   number3(formula, vars, k);
+  number4(formula, vars, k);
   /*
   1-
   */
-  showFormula(formula);
+  showFormula(formula, nbSommet * k);
   destroyFormula(formula);
+  destroyVars(vars);
   return 0;
 }

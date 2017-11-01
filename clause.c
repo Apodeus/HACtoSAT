@@ -24,5 +24,5 @@ void showClause(Clause c){
   for(int i = 0; i < c->length; i++){
     printf("%d ", c->vars[i]);
   }
-  printf("\n");
+  printf("0\n");
 }

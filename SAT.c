@@ -5,7 +5,7 @@
 
 SAT_Formula create_formula(){
   SAT_Formula formula = (SAT_Formula)malloc(sizeof(SAT_Formula));
-  formula->max_clause = 128;
+  formula->max_clause = 2;
   formula->nb_clause = 0;
   formula->clauses = (Clause*)malloc(sizeof(Clause) * formula->max_clause);
 
@@ -40,8 +40,9 @@ void add(SAT_Formula f, Clause c){
 
 }
 
-void showFormula(SAT_Formula f){
-  printf("Beginning display SAT Formula :\n");
+void showFormula(SAT_Formula f, int nbVars){
+  //printf("Showing the SAT formula :\n");
+  printf("p cnf %d %d\n", nbVars, f->nb_clause);
   for(int i = 0; i < f->nb_clause; i++){
     showClause(f->clauses[i]);
   }

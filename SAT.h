@@ -13,4 +13,4 @@ typedef struct t_formula *SAT_Formula;
 SAT_Formula create_formula();
 void destroyFormula(SAT_Formula formula);
 void add(SAT_Formula f, Clause c);
-void showFormula(SAT_Formula f);
+void showFormula(SAT_Formula f, int nbVars);
