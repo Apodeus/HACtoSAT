@@ -1,6 +1,6 @@
 #include "SAT.h"
 #include "test.h"
-
+#include "util.h"
 
 void showVars(int** vars, int w, int h){
   for(int i = 0; i < w; i++){
@@ -100,8 +100,101 @@ void number4(SAT_Formula f, int** vars, int k){
   }
 }
 
+void printResultGraph(int nbSommet, int k){
+
+    //init vars and stuff
+    char* c = (char*) malloc(sizeof(char) * 255);
+    int* r = (int*) malloc(sizeof(int) * nbSommet);
+
+    //adjacent matrix
+    int** result = (int**) malloc(sizeof(int*) * nbSommet);
+    for (int i = 0; i < nbSommet; i++){
+        result[i] = (int*) malloc(sizeof(int) * nbSommet);
+        for (int j = 0; j < nbSommet; j++)
+            result[i][j] = 0;
+    }
+
+    int i = 0;
+
+    //get all the positives values from stdin
+    while (c[0] != '0'){
+        scanf("%s", c);
+        int n = atoi(c);
+        if (n > 0){
+            r[i] = n;
+            i++;
+        }
+    }
+
+    // for (i = 0; i < nbSommet; i++)
+    //     fprintf(stderr, "%d\n", r[i]);
+
+    //translate values from Glucz to vertex identifier + their d(v)
+    int* d = (int*) malloc(sizeof(int) * nbSommet);
+    int* v = (int*) malloc(sizeof(int) * nbSommet);
+    for (i = 0; i < nbSommet; i++){
+        d[i] = (r[i] - 1) % (k + 1);
+        v[i] = 0;
+        //fprintf(stderr, "i = %d, value is %d; computed v = %d, computed d = %d\n", i, r[i], v[i], d[i]);
+    }
+
+    int degree = 0; //root
+    queue q = newQueue(0);
+    int root_i = -1;
+    while (q != NULL){
+        queue t = q;
+        while (t!= NULL){
+            // fprintf(stderr, "%d->", t->value);
+            t = t->next;
+        }
+        // if (q != NULL)
+        //     fprintf(stderr, "current: v%d\n", q->value);
+        for (i = 0; i < nbSommet; i++){
+            //fprintf(stderr, "looking for v%d and v%d\n", v[q->value], v[i]);
+            if (d[i] == degree){
+                if (degree == 0 && root_i == -1)
+                    root_i = i;
+                addToQueue(q, i);
+                //fprintf(stderr, "ADDED (%d): v%d\n",degree, v[i]);
+                if (q != NULL && v[i] == 0 && are_adjacent(q->value, i)){
+                    fprintf(stderr, "v%d and v%d are adjacent\n", q->value, i);
+                    result[i][q->value] = 1;
+                    result[q->value][i] = 1;
+                    v[i] = 1;
+                }
+            }
+        }
+
+        q = q->next;
+        if (q == NULL)
+            break;
+        //fprintf(stderr, "new loop\n");
+        int new_degree = d[q->value] + 1;
+        // if (new_degree != degree){
+            // fprintf(stderr, "nd = %d; d = %d\n", new_degree, degree);
+        // }
+
+        degree = new_degree;
+    }
+
+    //display
+    printf("Root vertex is v%d\n", root_i);
+    for (i = 0; i < nbSommet; i++){
+        for (int j = 0; j < nbSommet; j++){
+            printf("%d ", result[i][j]);
+        }
+
+        printf("\n");
+    }
+}
+
+
 int main(int argc, char* argv[]){
   //Init vars
+  if (argc == 3){
+      printResultGraph(atoi(argv[1]), atoi(argv[2]));
+      return 0;
+  }
 
   int nbSommet = orderG();
   int k = 1;
@@ -122,8 +215,8 @@ int main(int argc, char* argv[]){
   }
 
 
-  //showVars(vars, nbSommet, k);
-  //printf("\n\n");
+  showVars(vars, nbSommet, k);
+  printf("\n\n");
 
   number1(formula, vars, k);
   number2(formula, vars, k);
