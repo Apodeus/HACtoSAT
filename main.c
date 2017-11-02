@@ -1,22 +1,9 @@
+#include <string.h>
 #include "SAT.h"
-#include "test.h"
-#include "util.h"
+#include "all.h"
+#include "vars.h"
+#include "queue.h"
 
-void showVars(int** vars, int w, int h){
-  for(int i = 0; i < w; i++){
-    for(int j = 0; j < h; j++){
-      printf("%02d ", vars[i][j]);
-    }
-    printf("\n");
-  }
-}
-
-void destroyVars(int** vars){
-  for(int i = 0; i < orderG(); i++){
-    free(vars[i]);
-  }
-  free(vars);
-}
 
 void number1(SAT_Formula f, int** vars, int k){
   int nbSommet = orderG();
@@ -191,32 +178,23 @@ void printResultGraph(int nbSommet, int k){
 
 int main(int argc, char* argv[]){
   //Init vars
-  if (argc == 3){
-      printResultGraph(atoi(argv[1]), atoi(argv[2]));
-      return 0;
+
+  if (strcmp(argv[1], "-r") && argc == 3){
+    printResultGraph(orderG(), atoi(argv[2]));
+    return 0;
+  } else if(argc != 2){
+    return 1;
   }
 
   int nbSommet = orderG();
-  int k = 1;
-  if(argc > 1)
-    k = atoi(argv[1]);
-  k++;
+  int k;
+  k = atoi(argv[1]) + 1;
 
-  int** vars = (int**) malloc(sizeof(int*) * nbSommet);// All vars we need Xu,i, with u€V and i€[0;k]
+  int** vars = createVars(nbSommet, k);
   SAT_Formula formula = create_formula();
 
-  int n = 1;
-  for(int i = 0; i < nbSommet; i++){
-    vars[i] = malloc(sizeof(int) * k);
-    for(int j = 0; j < k; j++){
-      vars[i][j] = n;
-      n++;
-    }
-  }
-
-
-  showVars(vars, nbSommet, k);
-  printf("\n\n");
+  //showVars(vars, nbSommet, k);
+  //printf("\n\n");
 
   number1(formula, vars, k);
   number2(formula, vars, k);
@@ -227,6 +205,6 @@ int main(int argc, char* argv[]){
   */
   showFormula(formula, nbSommet * k);
   destroyFormula(formula);
-  destroyVars(vars);
+  destroyVars(vars, nbSommet);
   return 0;
 }

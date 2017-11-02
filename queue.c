@@ -1,4 +1,4 @@
-#include "util.h"
+#include "queue.h"
 
 queue newQueue(int v){
     queue q = (queue) malloc(sizeof(struct t_queue));
