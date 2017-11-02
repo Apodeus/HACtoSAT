@@ -86,10 +86,10 @@ void number4(SAT_Formula f, int** vars, int k){
 void printResultGraph(int nbVertex, int k){
 
     //init vars and stuff
-    char* c = (char*) malloc(sizeof(char) * 255);
+    char* var = (char*) malloc(sizeof(char) * 255);
     int* r = (int*) malloc(sizeof(int) * nbVertex);
 
-    //adjacent matrix
+    //malloc of the adjacent matrix & fill with 0
     int** result = (int**) malloc(sizeof(int*) * nbVertex);
     for (int i = 0; i < nbVertex; i++){
         result[i] = (int*) malloc(sizeof(int) * nbVertex);
@@ -100,9 +100,9 @@ void printResultGraph(int nbVertex, int k){
     int i = 0;
 
     //get all the positives values from stdin
-    while (c[0] != '0'){
-        scanf("%s", c);
-        int n = atoi(c);
+    while (var[0] != '0'){
+        scanf("%s", var);
+        int n = atoi(var);
         if (n > 0){
             r[i] = n;
             i++;
@@ -119,6 +119,7 @@ void printResultGraph(int nbVertex, int k){
 
     int degree = 0; //root
     queue q = newQueue(0);
+    queue first = q;
     int root_i = -1;
     while (q != NULL){
         queue t = q;
@@ -158,6 +159,16 @@ void printResultGraph(int nbVertex, int k){
 
         printf("\n");
     }
+
+    destroyQueue(first);
+    free(v);
+    free(d);
+    free(var);
+    free(r);
+    for(int i = 0; i < nbVertex; i ++){
+      free(result[i]);
+    }
+    free(result);
 }
 
 

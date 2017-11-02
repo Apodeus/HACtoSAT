@@ -11,3 +11,4 @@ typedef struct t_queue* queue;
 queue newQueue(int v);
 queue addToQueue(queue q, int value);
 queue nextInQueue(queue q);
+void destroyQueue(queue q);

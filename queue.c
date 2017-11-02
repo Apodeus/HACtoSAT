@@ -33,3 +33,13 @@ queue nextInQueue(queue q){
     free(q);
     return result;
 }
+
+void destroyQueue(queue q){
+
+  while(q->next != NULL){
+    queue next = q->next;
+    free(q);
+    q = next;
+  }
+  free(q);
+}
