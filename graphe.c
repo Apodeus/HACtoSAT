@@ -34,7 +34,7 @@ int are_adjacent(int u, int v){
 }
 */
 //======================================================================
-
+//Cycle of 10 Vertex
 int orderG(){
 return 10;}
 

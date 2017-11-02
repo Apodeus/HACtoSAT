@@ -3,10 +3,10 @@
 #include "vars.h"
 
 
-int** createVars(int nbSommet, int k){
-  int** vars = (int**)malloc(sizeof(int*) * nbSommet);
+int** createVars(int nbVertex, int k){
+  int** vars = (int**)malloc(sizeof(int*) * nbVertex);
   int n = 1;
-  for(int i = 0; i < nbSommet; i++){
+  for(int i = 0; i < nbVertex; i++){
     vars[i] = malloc(sizeof(int) * k);
     for(int j = 0; j < k; j++){
       vars[i][j] = n;
@@ -25,8 +25,8 @@ void showVars(int** vars, int w, int h){
   }
 }
 
-void destroyVars(int** vars, int nbSommet){
-  for(int i = 0; i < nbSommet; i++){
+void destroyVars(int** vars, int nbVertex){
+  for(int i = 0; i < nbVertex; i++){
     free(vars[i]);
   }
   free(vars);

@@ -4,44 +4,39 @@
 #include "vars.h"
 #include "queue.h"
 
-
+//First clause of the Question
 void number1(SAT_Formula f, int** vars, int k){
-  int nbSommet = orderG();
-  for(int sommet = 0; sommet < nbSommet; sommet++){//begin orange Part
-    Clause c = create_clause(k, DISJONCTIVE);//begin Yellow Part
+  int nbVertex = orderG();
+  for(int vertex = 0; vertex < nbVertex; vertex++){
+    Clause c = create_clause(k, DISJONCTIVE);
     int h = 0;
     for(int i = 0; i < c->length; i++){
-        c->vars[i] = vars[sommet][h];
+        c->vars[i] = vars[vertex][h];
         h++;
     }
     add(f, c);
-    //end yellow part
-    //begin green Part
     for(int i = 0; i < k - 1; i++){
       for(int j = i + 1; j < k; j++){
         Clause c2 = create_clause(2, DISJONCTIVE);
-        c2->vars[0] = -vars[sommet][i];
-        c2->vars[1] = -vars[sommet][j];
+        c2->vars[0] = -vars[vertex][i];
+        c2->vars[1] = -vars[vertex][j];
         add(f, c2);
       }
-    }//end green Part
-  }//end Orange Part
+    }
+  }
 }
 
-
+//Second clause of the Question
 void number2(SAT_Formula f, int** vars, int k){
-  int nbSommet = orderG();
-  Clause c1 = create_clause(nbSommet, DISJONCTIVE);
-  for(int i = 0; i < nbSommet; i++){
+  int nbVertex = orderG();
+  Clause c1 = create_clause(nbVertex, DISJONCTIVE);
+  for(int i = 0; i < nbVertex; i++){
     c1->vars[i] = vars[i][0];
   }
   add(f, c1);
-  //
-  //n² +n / 2
-  int nb = ((nbSommet * nbSommet) + nbSommet) / 2;
-  //printf("\n NB CLAUSES NUMBER 2 : %d\n\n", nb);
-  for(int i = 0; i < nbSommet - 1; i++){
-    for(int j = i + 1; j < nbSommet; j++){
+
+  for(int i = 0; i < nbVertex - 1; i++){
+    for(int j = i + 1; j < nbVertex; j++){
       Clause c = create_clause(2, DISJONCTIVE);
       c->vars[0] = -vars[i][0];
       c->vars[1] = -vars[j][0];
@@ -50,16 +45,17 @@ void number2(SAT_Formula f, int** vars, int k){
   }
 }
 
+//Third clause of the Question
 void number3(SAT_Formula f, int** vars, int k){
   Clause c = create_clause(orderG(), DISJONCTIVE);
   for(int i = 0; i < orderG(); i++){
     c->vars[i] = vars[i][k-1];
   }
   add(f, c);
-  //return c;
 }
 
-int nbVoisin(int u){
+//Return the number of neighbours of the vertex u.
+int nbNeighbours(int u){
   int n = 0;
   for(int i = 0; i < orderG(); i++){
     if(are_adjacent(u, i))
@@ -68,36 +64,36 @@ int nbVoisin(int u){
   return n;
 }
 
+//Fourth clause of the Question
 void number4(SAT_Formula f, int** vars, int k){
-  int nbSommet = orderG();
-  for(int sommet = 0; sommet < nbSommet; sommet++){
+  int nbVertex = orderG();
+  for(int vertex = 0; vertex < nbVertex; vertex++){
     for(int i = 1; i < k; i++){
-      Clause c = create_clause(nbVoisin(sommet) + 1, DISJONCTIVE);
-      c->vars[0] = -vars[sommet][i];
+      Clause c = create_clause(nbNeighbours(vertex) + 1, DISJONCTIVE);
+      c->vars[0] = -vars[vertex][i];
       int cursor = 1;
-      for(int voisin = 0; voisin < nbSommet; voisin++){
-        if(are_adjacent(sommet, voisin)){
+      for(int voisin = 0; voisin < nbVertex; voisin++){
+        if(are_adjacent(vertex, voisin)){
           c->vars[cursor] = vars[voisin][i - 1];
           cursor++;
         }
       }
       add(f, c);
-
     }
   }
 }
 
-void printResultGraph(int nbSommet, int k){
+void printResultGraph(int nbVertex, int k){
 
     //init vars and stuff
     char* c = (char*) malloc(sizeof(char) * 255);
-    int* r = (int*) malloc(sizeof(int) * nbSommet);
+    int* r = (int*) malloc(sizeof(int) * nbVertex);
 
     //adjacent matrix
-    int** result = (int**) malloc(sizeof(int*) * nbSommet);
-    for (int i = 0; i < nbSommet; i++){
-        result[i] = (int*) malloc(sizeof(int) * nbSommet);
-        for (int j = 0; j < nbSommet; j++)
+    int** result = (int**) malloc(sizeof(int*) * nbVertex);
+    for (int i = 0; i < nbVertex; i++){
+        result[i] = (int*) malloc(sizeof(int) * nbVertex);
+        for (int j = 0; j < nbVertex; j++)
             result[i][j] = 0;
     }
 
@@ -113,16 +109,12 @@ void printResultGraph(int nbSommet, int k){
         }
     }
 
-    // for (i = 0; i < nbSommet; i++)
-    //     fprintf(stderr, "%d\n", r[i]);
-
     //translate values from Glucz to vertex identifier + their d(v)
-    int* d = (int*) malloc(sizeof(int) * nbSommet);
-    int* v = (int*) malloc(sizeof(int) * nbSommet);
-    for (i = 0; i < nbSommet; i++){
+    int* d = (int*) malloc(sizeof(int) * nbVertex);
+    int* v = (int*) malloc(sizeof(int) * nbVertex);
+    for (i = 0; i < nbVertex; i++){
         d[i] = (r[i] - 1) % (k + 1);
         v[i] = 0;
-        //fprintf(stderr, "i = %d, value is %d; computed v = %d, computed d = %d\n", i, r[i], v[i], d[i]);
     }
 
     int degree = 0; //root
@@ -131,18 +123,14 @@ void printResultGraph(int nbSommet, int k){
     while (q != NULL){
         queue t = q;
         while (t!= NULL){
-            // fprintf(stderr, "%d->", t->value);
             t = t->next;
         }
-        // if (q != NULL)
-        //     fprintf(stderr, "current: v%d\n", q->value);
-        for (i = 0; i < nbSommet; i++){
-            //fprintf(stderr, "looking for v%d and v%d\n", v[q->value], v[i]);
+
+        for (i = 0; i < nbVertex; i++){
             if (d[i] == degree){
                 if (degree == 0 && root_i == -1)
                     root_i = i;
                 addToQueue(q, i);
-                //fprintf(stderr, "ADDED (%d): v%d\n",degree, v[i]);
                 if (q != NULL && v[i] == 0 && are_adjacent(q->value, i)){
                     fprintf(stderr, "v%d and v%d are adjacent\n", q->value, i);
                     result[i][q->value] = 1;
@@ -155,19 +143,16 @@ void printResultGraph(int nbSommet, int k){
         q = q->next;
         if (q == NULL)
             break;
-        //fprintf(stderr, "new loop\n");
+
         int new_degree = d[q->value] + 1;
-        // if (new_degree != degree){
-            // fprintf(stderr, "nd = %d; d = %d\n", new_degree, degree);
-        // }
 
         degree = new_degree;
     }
 
     //display
     printf("Root vertex is v%d\n", root_i);
-    for (i = 0; i < nbSommet; i++){
-        for (int j = 0; j < nbSommet; j++){
+    for (i = 0; i < nbVertex; i++){
+        for (int j = 0; j < nbVertex; j++){
             printf("%d ", result[i][j]);
         }
 
@@ -177,34 +162,31 @@ void printResultGraph(int nbSommet, int k){
 
 
 int main(int argc, char* argv[]){
-  //Init vars
 
-  if (strcmp(argv[1], "-r") && argc == 3){
+  if (argc == 3 && strcmp(argv[1], "-r") == 0){
     printResultGraph(orderG(), atoi(argv[2]));
     return 0;
   } else if(argc != 2){
+    printf("Use './main k > formula.txt' to create your file for glucose.\n");
+    printf("Use './main -r k < result.txt' to display the adjacent matrix of the tree with k height.\n");
+    printf("Replace the k with the height of your tree\n");
     return 1;
   }
 
-  int nbSommet = orderG();
-  int k;
-  k = atoi(argv[1]) + 1;
+  int nbVertex = orderG();
+  int k = atoi(argv[1]) + 1;
 
-  int** vars = createVars(nbSommet, k);
+  int** vars = createVars(nbVertex, k);
   SAT_Formula formula = create_formula();
-
-  //showVars(vars, nbSommet, k);
-  //printf("\n\n");
 
   number1(formula, vars, k);
   number2(formula, vars, k);
   number3(formula, vars, k);
   number4(formula, vars, k);
-  /*
-  1-
-  */
-  showFormula(formula, nbSommet * k);
+
+  showFormula(formula, nbVertex * k);
+
   destroyFormula(formula);
-  destroyVars(vars, nbSommet);
+  destroyVars(vars, nbVertex);
   return 0;
 }
