@@ -121,17 +121,16 @@ void printResultGraph(int nbVertex, int k){
     queue q = newQueue(0);
     queue first = q; //queue first is just here for free the queue
     int root_i = -1;
+    //Construction of the queue
     while (q != NULL){
-        /*queue t = q;
-        while (t!= NULL){
-            t = t->next;
-        }
-        */
         for (i = 0; i < nbVertex; i++){
             if (heightVertex[i] == height){
-                if (height == 0 && root_i == -1)
+                if (height == 0 && root_i == -1) // if it's the root
                     root_i = i;
+                // We had the index i which has the good height
                 addToQueue(q, i);
+                //If the vertex at index i is not marked and is adjacent with the first in the queue
+                //We update the adjacent matrix (result here). And we mark the index i
                 if (q != NULL && markOnVertex[i] == 0 && are_adjacent(q->value, i)){
                     fprintf(stderr, "v%d and v%d are adjacent\n", q->value, i);
                     result[i][q->value] = 1;
@@ -141,16 +140,14 @@ void printResultGraph(int nbVertex, int k){
             }
         }
 
+        //We take the next in queue
+        //And update the the height.
         q = q->next;
-        if (q == NULL)
-            break;
-
-        int new_height = heightVertex[q->value] + 1;
-
-        height = new_height;
+        if (q != NULL)
+          height = heightVertex[q->value] + 1;
     }
 
-    //display
+    //display the matrix
     printf("Root vertex is v%d\n", root_i);
     for (i = 0; i < nbVertex; i++){
         for (int j = 0; j < nbVertex; j++){
@@ -160,6 +157,7 @@ void printResultGraph(int nbVertex, int k){
         printf("\n");
     }
 
+    //free all
     destroyQueue(first);
     free(markOnVertex);
     free(heightVertex);
